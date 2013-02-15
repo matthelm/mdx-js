@@ -1,6 +1,18 @@
-toString = ->
-  "MY MDX QUERY"
+class Query
 
-exports[key] = value for key, value of {
-  toString      : toString
-}
+  constructor: ->
+    @cube  = null
+    @axes  = []
+    @where = []
+    @with  = []
+
+  axis: ->
+
+  except: ->
+
+  filter: (condition, options={}) ->
+
+  toMDX: ->
+    "finally, here is our MDX string"
+
+(exports ? this).Query = Query

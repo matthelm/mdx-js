@@ -10,6 +10,7 @@
 files = [
   MOCHA,
   MOCHA_ADAPTER,
+  'lib/mdx-js.js',
   'test/vendor/chai.js',
   'test/lib/*_test.js'
 ];

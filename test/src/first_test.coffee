@@ -50,6 +50,10 @@ describe "result", ->
   it "should return formatted cells", ->
     expect(true).to.be.true
 
+  it "should serialize correctly", ->
+    query = new window.Query
+    assert.equal query.toMDX(), "finally, here is our MDX string"
+
 # BUILDER
 
 # ERRORS

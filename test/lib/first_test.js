@@ -50,8 +50,13 @@
     it("should return cells with specified axes name sequence", function() {
       return expect(true).to.be["true"];
     });
-    return it("should return formatted cells", function() {
+    it("should return formatted cells", function() {
       return expect(true).to.be["true"];
+    });
+    return it("should serialize correctly", function() {
+      var query;
+      query = new window.Query;
+      return assert.equal(query.toMDX(), "finally, here is our MDX string");
     });
   });
 
