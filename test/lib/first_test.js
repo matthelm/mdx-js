@@ -50,13 +50,78 @@
     it("should return cells with specified axes name sequence", function() {
       return expect(true).to.be["true"];
     });
-    it("should return formatted cells", function() {
+    return it("should return formatted cells", function() {
       return expect(true).to.be["true"];
     });
-    return it("should serialize correctly", function() {
-      var query;
-      query = new window.Query;
-      return assert.equal(query.toMDX(), "finally, here is our MDX string");
+  });
+
+  describe("builder", function() {
+    beforeEach(function() {
+      return this.query = new Query('Sales');
+    });
+    describe("from cube", function() {
+      return it("should return query", function() {
+        return assert.equal(this.query.cube_name, 'Sales');
+      });
+    });
+    describe("columns", function() {
+      it("should accept list", function() {
+        assert.deepEqual(this.query.columns('[Measures].[Unit Sales]', '[Measures].[Store Sales]'), this.query);
+        return assert.deepEqual(this.query.columns(), ['[Measures].[Unit Sales]', '[Measures].[Store Sales]']);
+      });
+      it("should accept list as array", function() {
+        this.query.columns(['[Measures].[Unit Sales]', '[Measures].[Store Sales]']);
+        return assert.deepEqual(this.query.columns(), ['[Measures].[Unit Sales]', '[Measures].[Store Sales]']);
+      });
+      return it("should accept with several method calls", function() {
+        this.query.columns('[Measures].[Unit Sales]').columns('[Measures].[Store Sales]');
+        return assert.deepEqual(this.query.columns(), ['[Measures].[Unit Sales]', '[Measures].[Store Sales]']);
+      });
+    });
+    describe("other axis", function() {
+      it("should accept rows list", function() {
+        this.query.rows('[Product].children');
+        return assert.deepEqual(this.query.rows(), ['[Product].children']);
+      });
+      return it("should accept pages list", function() {
+        this.query.pages('[Product].children');
+        return assert.deepEqual(this.query.pages(), ['[Product].children']);
+      });
+    });
+    describe("order", function() {
+      it("should order by one measure", function() {
+        this.query.rows('[Product].children');
+        this.query.order('[Measures].[Unit Sales]', 'bdesc');
+        return assert.deepEqual(this.query.rows(), ['order', ['[Product].children'], '[Measures].[Unit Sales]', 'BDESC']);
+      });
+      it("should order using String order direction", function() {
+        this.query.rows('[Product].children').order('[Measures].[Unit Sales]', 'DESC');
+        return assert.deepEqual(this.query.rows(), ['order', ['[Product].children'], '[Measures].[Unit Sales]', 'DESC']);
+      });
+      return it("should order by measure and other member", function() {
+        this.query.rows('[Product].children').order(['[Measures].[Unit Sales]', '[Customers].[USA]'], 'basc');
+        return assert.deepEqual(this.query.rows(), ['order', ['[Product].children'], ['[Measures].[Unit Sales]', '[Customers].[USA]'], 'BASC']);
+      });
+    });
+    describe("filter", function() {
+      it("should filter set by condition", function() {
+        this.query.rows('[Customers].[Country].Members').filter('[Measures].[Unit Sales] > 1000');
+        return assert.deepEqual(this.query.rows(), ['filter', ['[Customers].[Country].Members'], '[Measures].[Unit Sales] > 1000']);
+      });
+      return it("should filter using set alias", function() {
+        this.query.rows('[Customers].[Country].Members').filter('NOT ISEMPTY(S.CURRENT)', {
+          as: 'S'
+        });
+        return assert.deepEqual(this.query.rows(), ['filter', ['[Customers].[Country].Members'], 'NOT ISEMPTY(S.CURRENT)', 'S']);
+      });
+    });
+    return describe("to MDX", function() {
+      return it("should return MDX query", function() {
+        var MDX, SQL;
+        MDX = this.query.columns('[Measures].[Unit Sales]', '[Measures].[Store Sales]').rows('[Product].children').where('[Time].[2010].[Q1]', '[Customers].[USA].[CA]').toMDX();
+        SQL = "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,\n[Product].children ON ROWS\nFROM [Sales]";
+        return assert.equal(MDX, SQL);
+      });
     });
   });
 
