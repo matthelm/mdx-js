@@ -33,10 +33,6 @@ class Query
   sections: -> @axis(3, arguments)
   chapters: -> @axis(4, arguments)
 
-  except: -> console.log "Implementation Needed"
-  filter: -> console.log "Implementation Needed"
-  hierarchize: -> console.log "Implementation Needed"
-
   filter: (condition, options={}) ->
     throw "Can not use filter method before axis or with_set method" unless @current_set
     @axes[1] = ['filter', @current_set.slice(0), condition]
